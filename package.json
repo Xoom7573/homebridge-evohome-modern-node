@@ -1,6 +1,6 @@
 {
-  "displayName": "Homebridge Evohome",
-  "name": "homebridge-evohome",
+  "displayName": "Homebridge Evohome Modern",
+  "name": "homebridge-evohome-modern",
   "version": "0.11.2",
   "description": "Honeywell Evohome support for Homebridge: https://github.com/nfarina/homebridge",
   "license": "ISC",
@@ -9,13 +9,6 @@
     "evohome",
     "honeywell"
   ],
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/luc-ass/homebridge-evohome.git"
-  },
-  "bugs": {
-    "url": "https://github.com/luc-ass/homebridge-evohome/issues"
-  },
   "engines": {
     "node": ">=0.12.0",
     "homebridge": ">=0.3.1"
