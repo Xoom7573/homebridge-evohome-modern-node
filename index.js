@@ -33,10 +33,11 @@ module.exports = function (homebridge) {
     constructor() {
       super("Valve position", "E863F12E-079E-48FF-8F27-9C2605A29F52");
       this.setProps({
-        format: Characteristic.Formats.UINT8,
-        unit: Characteristic.Units.PERCENTAGE,
-        perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
+        format: homebridge.hap.Formats.UINT8,
+        unit: homebridge.hap.Units.PERCENTAGE,
+        perms: [homebridge.hap.Perms.READ, homebridge.hap.Perms.NOTIFY]
       });
+      this.value = this.getDefaultValue();
     }
   };
   CustomCharacteristic.ValvePosition.UUID =
@@ -48,9 +49,10 @@ module.exports = function (homebridge) {
     constructor() {
       super("Program command", "E863F12C-079E-48FF-8F27-9C2605A29F52");
       this.setProps({
-        format: Characteristic.Formats.DATA,
-        perms: [Characteristic.Perms.WRITE, Characteristic.Perms.NOTIFY]
+        format: homebridge.hap.Formats.DATA,
+        perms: [homebridge.hap.Perms.WRITE, homebridge.hap.Perms.NOTIFY]
       });
+      this.value = this.getDefaultValue();
     }
   };
   CustomCharacteristic.ProgramCommand.UUID =
@@ -60,9 +62,10 @@ module.exports = function (homebridge) {
     constructor() {
       super("Program data", "E863F12F-079E-48FF-8F27-9C2605A29F52");
       this.setProps({
-        format: Characteristic.Formats.DATA,
-        perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
+        format: homebridge.hap.Formats.DATA,
+        perms: [homebridge.hap.Perms.READ, homebridge.hap.Perms.NOTIFY]
       });
+      this.value = this.getDefaultValue();
     }
   };
   CustomCharacteristic.ProgramData.UUID =
