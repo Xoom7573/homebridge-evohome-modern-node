@@ -26,43 +26,40 @@ module.exports = function (homebridge) {
   Service = homebridge.hap.Service;
   Characteristic = homebridge.hap.Characteristic;
 
-  CustomCharacteristic.ValvePosition = class ValvePosition extends (
-    Characteristic
-  ) {
+  // Create custom characteristics as properties
+  CustomCharacteristic.ValvePosition = class ValvePosition extends Characteristic {
     constructor() {
       super("Valve position", "E863F12E-079E-48FF-8F27-9C2605A29F52");
       this.setProps({
         format: Characteristic.Formats.UINT8,
         unit: Characteristic.Units.PERCENTAGE,
-        perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
+        perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY],
       });
-      this.value = this.getDefaultValue();
     }
   };
+  CustomCharacteristic.ValvePosition.UUID = "E863F12E-079E-48FF-8F27-9C2605A29F52";
 
-  CustomCharacteristic.ProgramCommand = class ProgramCommand extends (
-    Characteristic
-  ) {
+  CustomCharacteristic.ProgramCommand = class ProgramCommand extends Characteristic {
     constructor() {
       super("Program command", "E863F12C-079E-48FF-8F27-9C2605A29F52");
       this.setProps({
         format: Characteristic.Formats.DATA,
-        perms: [Characteristic.Perms.WRITE, Characteristic.Perms.NOTIFY]
+        perms: [Characteristic.Perms.WRITE, Characteristic.Perms.NOTIFY],
       });
-      this.value = this.getDefaultValue();
     }
   };
+  CustomCharacteristic.ProgramCommand.UUID = "E863F12C-079E-48FF-8F27-9C2605A29F52";
 
   CustomCharacteristic.ProgramData = class ProgramData extends Characteristic {
     constructor() {
       super("Program data", "E863F12F-079E-48FF-8F27-9C2605A29F52");
       this.setProps({
         format: Characteristic.Formats.DATA,
-        perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
+        perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY],
       });
-      this.value = this.getDefaultValue();
     }
   };
+  CustomCharacteristic.ProgramData.UUID = "E863F12F-079E-48FF-8F27-9C2605A29F52";
 
   homebridge.registerPlatform("homebridge-evohome", "Evohome", EvohomePlatform);
 };
