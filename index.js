@@ -206,8 +206,9 @@ EvohomePlatform.prototype = {
                                           that.log,
                                           name,
                                           device,
-                                          locations[that.locationIndex]
-                                            .systemId,
+                                          locations[
+                                            that.locationIndex
+                                          ].systemId,
                                           deviceID,
                                           thermostat,
                                           this.temperatureUnit,
@@ -838,7 +839,11 @@ EvohomeThermostatAccessory.prototype = {
     // COOL = 2
     // AUTO = 3
     var state = 1;
-    if (this.model == "HeatingZone" || this.model == "RoundWireless" || this.model == "RoundModulation") {
+    if (
+      this.model == "HeatingZone" ||
+      this.model == "RoundWireless" ||
+      this.model == "RoundModulation"
+    ) {
       var targetTemp = this.thermostat.setpointStatus.targetHeatTemperature;
       var currentTemp = this.thermostat.temperatureStatus.temperature;
 
@@ -943,7 +948,11 @@ EvohomeThermostatAccessory.prototype = {
     // COOL = 2
     // AUTO = 3
     var state = 1;
-    if (this.model == "HeatingZone" || this.model == "RoundWireless" || this.model == "RoundModulation") {
+    if (
+      this.model == "HeatingZone" ||
+      this.model == "RoundWireless" ||
+      this.model == "RoundModulation"
+    ) {
       var targetTemp = this.thermostat.setpointStatus.targetHeatTemperature;
       var currentTemp = this.thermostat.temperatureStatus.temperature;
 
@@ -976,9 +985,12 @@ EvohomeThermostatAccessory.prototype = {
     // with DOMESTIC_HOT_WATER) so we need to check if it
     // is defined first
     var targetTemperature = 0;
-    if (this.model == "HeatingZone" || this.model == "RoundWireless" || this.model == "RoundModulation") {
-      targetTemperature =
-        this.thermostat.setpointStatus.targetHeatTemperature;
+    if (
+      this.model == "HeatingZone" ||
+      this.model == "RoundWireless" ||
+      this.model == "RoundModulation"
+    ) {
+      targetTemperature = this.thermostat.setpointStatus.targetHeatTemperature;
       that.log.debug(
         "Target temperature for",
         this.name,
@@ -1010,7 +1022,11 @@ EvohomeThermostatAccessory.prototype = {
 
   getValvePosition: function (callback) {
     var state = 100;
-    if (this.model == "HeatingZone" || this.model == "RoundWireless" || this.model == "RoundModulation") {
+    if (
+      this.model == "HeatingZone" ||
+      this.model == "RoundWireless" ||
+      this.model == "RoundModulation"
+    ) {
       var targetTemp = this.thermostat.setpointStatus.targetHeatTemperature;
       var currentTemp = this.thermostat.temperatureStatus.temperature;
 
@@ -1079,7 +1095,10 @@ EvohomeThermostatAccessory.prototype = {
       .setProps({
         minValue: 1,
         maxValue: 50,
-        minStep: this.device && this.device.valueResolution ? this.device.valueResolution : 0.5
+        minStep:
+          this.device && this.device.valueResolution
+            ? this.device.valueResolution
+            : 0.5
       });
 
     // this.addCharacteristic(Characteristic.TargetTemperature); READ WRITE
@@ -1088,9 +1107,18 @@ EvohomeThermostatAccessory.prototype = {
       .on("get", this.getTargetTemperature.bind(this))
       .on("set", this.setTargetTemperature.bind(this))
       .setProps({
-        minValue: this.device && this.device.minHeatSetpoint ? this.device.minHeatSetpoint : 5,
-        maxValue: this.device && this.device.maxHeatSetpoint ? this.device.maxHeatSetpoint : 35,
-        minStep: this.device && this.device.valueResolution ? this.device.valueResolution : 0.5
+        minValue:
+          this.device && this.device.minHeatSetpoint
+            ? this.device.minHeatSetpoint
+            : 5,
+        maxValue:
+          this.device && this.device.maxHeatSetpoint
+            ? this.device.maxHeatSetpoint
+            : 35,
+        minStep:
+          this.device && this.device.valueResolution
+            ? this.device.valueResolution
+            : 0.5
       });
 
     // this.addCharacteristic(Characteristic.TemperatureDisplayUnits); READ WRITE
@@ -1361,7 +1389,10 @@ EvohomeSwitchAccessory.prototype = {
       .setCharacteristic(Characteristic.Manufacturer, "Honeywell")
       .setCharacteristic(Characteristic.Model, this.model || "Unknown")
       .setCharacteristic(Characteristic.Name, this.name)
-      .setCharacteristic(Characteristic.SerialNumber, this.systemMode || "Unknown")
+      .setCharacteristic(
+        Characteristic.SerialNumber,
+        this.systemMode || "Unknown"
+      )
       .setCharacteristic(Characteristic.FirmwareRevision, "1.0.0");
 
     // Switch service
