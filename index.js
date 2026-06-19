@@ -837,16 +837,14 @@ EvohomeThermostatAccessory.prototype = {
     // HEAT = 1
     // COOL = 2
     // AUTO = 3
-    if (this.model == "HeatingZone") {
+    var state = 1;
+    if (this.model == "HeatingZone" || this.model == "RoundWireless" || this.model == "RoundModulation") {
       var targetTemp = this.thermostat.setpointStatus.targetHeatTemperature;
       var currentTemp = this.thermostat.temperatureStatus.temperature;
 
       // state is HEAT if there is current call for heat, or OFF
-      var state = currentTemp < targetTemp ? 1 : 0;
+      state = currentTemp < targetTemp ? 1 : 0;
       that.log.debug("Current state of: " + this.name + " is: " + state);
-    } else {
-      var state = 1;
-      // domestic hot water not supported (set to heat by default)
     }
     callback(null, Number(state));
   },
@@ -944,21 +942,19 @@ EvohomeThermostatAccessory.prototype = {
     // HEAT = 1
     // COOL = 2
     // AUTO = 3
-    if (this.model == "HeatingZone") {
+    var state = 1;
+    if (this.model == "HeatingZone" || this.model == "RoundWireless" || this.model == "RoundModulation") {
       var targetTemp = this.thermostat.setpointStatus.targetHeatTemperature;
       var currentTemp = this.thermostat.temperatureStatus.temperature;
 
       // Sets the heating state of the thermostat to either OFF or HEAT
-      var state =
+      state =
         // OFF if targetTemp <= 5 °C
         targetTemp <= 5 ||
         // OFF if targetTemp below currentTemp AND 'temperatureAboveAsOff' set to true
         (targetTemp <= currentTemp && that.temperatureAboveAsOff)
           ? 0
           : 1;
-    } else {
-      var state = 1;
-      // domestic hot water not supported (set to heat by default)
     }
     callback(null, Number(state));
   },
@@ -979,8 +975,9 @@ EvohomeThermostatAccessory.prototype = {
     // crashes the plugin IF there is no value defined (like
     // with DOMESTIC_HOT_WATER) so we need to check if it
     // is defined first
-    if ((this.model = "HeatingZone")) {
-      var targetTemperature =
+    var targetTemperature = 0;
+    if (this.model == "HeatingZone" || this.model == "RoundWireless" || this.model == "RoundModulation") {
+      targetTemperature =
         this.thermostat.setpointStatus.targetHeatTemperature;
       that.log.debug(
         "Target temperature for",
@@ -989,7 +986,6 @@ EvohomeThermostatAccessory.prototype = {
         targetTemperature + "°"
       );
     } else {
-      var targetTemperature = 0;
       that.log.debug(
         "Will set target temperature for",
         this.name,
@@ -1013,15 +1009,13 @@ EvohomeThermostatAccessory.prototype = {
   },
 
   getValvePosition: function (callback) {
-    if (this.model == "HeatingZone") {
+    var state = 100;
+    if (this.model == "HeatingZone" || this.model == "RoundWireless" || this.model == "RoundModulation") {
       var targetTemp = this.thermostat.setpointStatus.targetHeatTemperature;
       var currentTemp = this.thermostat.temperatureStatus.temperature;
 
       // state is HEAT if there is current call for heat, or OFF
-      var state = currentTemp < targetTemp ? 100 : 0;
-    } else {
-      var state = 100;
-      // domestic hot water not supported (set to heat by default)
+      state = currentTemp < targetTemp ? 100 : 0;
     }
     callback(null, Number(state));
   },
@@ -1035,7 +1029,7 @@ EvohomeThermostatAccessory.prototype = {
     // not implemented
     var data =
       "12f1130014c717040af6010700fc140c170c11fa24366684ffffffff24366684ffffffff24366684ffffffff24366684ffffffff24366684ffffffff24366684ffffffff24366684fffffffff42422222af3381900001a24366684ffffffff";
-    var buffer = new Buffer(
+    var buffer = Buffer.from(
       ("" + data).replace(/[^0-9A-F]/gi, ""),
       "hex"
     ).toString("base64");
@@ -1055,9 +1049,10 @@ EvohomeThermostatAccessory.prototype = {
     informationService
       .setCharacteristic(Characteristic.Identify, this.name)
       .setCharacteristic(Characteristic.Manufacturer, "Honeywell")
-      .setCharacteristic(Characteristic.Model, this.model)
+      .setCharacteristic(Characteristic.Model, this.model || "Unknown")
       .setCharacteristic(Characteristic.Name, this.name)
-      .setCharacteristic(Characteristic.SerialNumber, strSerial); // need to stringify the this.serial
+      .setCharacteristic(Characteristic.SerialNumber, strSerial || "Unknown")
+      .setCharacteristic(Characteristic.FirmwareRevision, "1.0.0"); // need to stringify the this.serial
 
     // Thermostat Service
     //this.thermostatService = new Service.Thermostat("Honeywell Thermostat");
@@ -1084,7 +1079,7 @@ EvohomeThermostatAccessory.prototype = {
       .setProps({
         minValue: 1,
         maxValue: 50,
-        minStep: this.device.valueResolution
+        minStep: this.device && this.device.valueResolution ? this.device.valueResolution : 0.5
       });
 
     // this.addCharacteristic(Characteristic.TargetTemperature); READ WRITE
@@ -1093,9 +1088,9 @@ EvohomeThermostatAccessory.prototype = {
       .on("get", this.getTargetTemperature.bind(this))
       .on("set", this.setTargetTemperature.bind(this))
       .setProps({
-        minValue: this.device.minHeatSetpoint,
-        maxValue: this.device.maxHeatSetpoint,
-        minStep: this.device.valueResolution
+        minValue: this.device && this.device.minHeatSetpoint ? this.device.minHeatSetpoint : 5,
+        maxValue: this.device && this.device.maxHeatSetpoint ? this.device.maxHeatSetpoint : 35,
+        minStep: this.device && this.device.valueResolution ? this.device.valueResolution : 0.5
       });
 
     // this.addCharacteristic(Characteristic.TemperatureDisplayUnits); READ WRITE
@@ -1261,9 +1256,10 @@ EvohomeDhwAccessory.prototype = {
     informationService
       .setCharacteristic(Characteristic.Identify, this.name)
       .setCharacteristic(Characteristic.Manufacturer, "Honeywell")
-      .setCharacteristic(Characteristic.Model, this.model)
+      .setCharacteristic(Characteristic.Model, this.model || "Unknown")
       .setCharacteristic(Characteristic.Name, this.name)
-      .setCharacteristic(Characteristic.SerialNumber, this.dhwId);
+      .setCharacteristic(Characteristic.SerialNumber, this.dhwId || "Unknown")
+      .setCharacteristic(Characteristic.FirmwareRevision, "1.0.0");
 
     // The Domestic Hot Water will be a Temperature Sensor, and within it
     // a switch to control on and off until next schedule.
@@ -1363,9 +1359,10 @@ EvohomeSwitchAccessory.prototype = {
     informationService
       .setCharacteristic(Characteristic.Identify, this.name)
       .setCharacteristic(Characteristic.Manufacturer, "Honeywell")
-      .setCharacteristic(Characteristic.Model, this.model)
+      .setCharacteristic(Characteristic.Model, this.model || "Unknown")
       .setCharacteristic(Characteristic.Name, this.name)
-      .setCharacteristic(Characteristic.SerialNumber, this.systemMode);
+      .setCharacteristic(Characteristic.SerialNumber, this.systemMode || "Unknown")
+      .setCharacteristic(Characteristic.FirmwareRevision, "1.0.0");
 
     // Switch service
     this.switchService = new Service.Switch();

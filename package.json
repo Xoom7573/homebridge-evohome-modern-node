@@ -1,7 +1,7 @@
 {
   "displayName": "Homebridge Evohome Modern",
   "name": "homebridge-evohome-modern",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Honeywell Evohome support for Homebridge: https://github.com/nfarina/homebridge",
   "license": "ISC",
   "keywords": [
@@ -14,11 +14,12 @@
     "homebridge": ">=0.3.1"
   },
   "dependencies": {
+    "fakegato-history": ">=0.6.1",
+    "hap-nodejs": "^0.14.3",
     "lodash": ">=4.17.13",
     "moment": "^2.18.1",
     "q": "~1.5.1",
-    "request": ">=2.68.0",
-    "fakegato-history": ">=0.6.1"
+    "request": ">=2.68.0"
   },
   "devDependencies": {
     "prettier": "3.6.2"
