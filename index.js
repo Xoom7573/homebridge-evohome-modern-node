@@ -17,7 +17,6 @@ var evohome = require("./lib/evohome.js");
 var Service, Characteristic;
 var config;
 var FakeGatoHistoryService;
-var inherits = require("util").inherits;
 const moment = require("moment");
 var CustomCharacteristic = {};
 
@@ -27,48 +26,43 @@ module.exports = function (homebridge) {
   Service = homebridge.hap.Service;
   Characteristic = homebridge.hap.Characteristic;
 
-  CustomCharacteristic.ValvePosition = function () {
-    Characteristic.call(
-      this,
-      "Valve position",
-      "E863F12E-079E-48FF-8F27-9C2605A29F52"
-    );
-    this.setProps({
-      format: Characteristic.Formats.UINT8,
-      unit: Characteristic.Units.PERCENTAGE,
-      perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY],
-    });
-    this.value = this.getDefaultValue();
+  CustomCharacteristic.ValvePosition = class ValvePosition extends (
+    Characteristic
+  ) {
+    constructor() {
+      super("Valve position", "E863F12E-079E-48FF-8F27-9C2605A29F52");
+      this.setProps({
+        format: Characteristic.Formats.UINT8,
+        unit: Characteristic.Units.PERCENTAGE,
+        perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
+      });
+      this.value = this.getDefaultValue();
+    }
   };
-  inherits(CustomCharacteristic.ValvePosition, Characteristic);
 
-  CustomCharacteristic.ProgramCommand = function () {
-    Characteristic.call(
-      this,
-      "Program command",
-      "E863F12C-079E-48FF-8F27-9C2605A29F52"
-    );
-    this.setProps({
-      format: Characteristic.Formats.DATA,
-      perms: [Characteristic.Perms.WRITE, Characteristic.Perms.NOTIFY],
-    });
-    this.value = this.getDefaultValue();
+  CustomCharacteristic.ProgramCommand = class ProgramCommand extends (
+    Characteristic
+  ) {
+    constructor() {
+      super("Program command", "E863F12C-079E-48FF-8F27-9C2605A29F52");
+      this.setProps({
+        format: Characteristic.Formats.DATA,
+        perms: [Characteristic.Perms.WRITE, Characteristic.Perms.NOTIFY]
+      });
+      this.value = this.getDefaultValue();
+    }
   };
-  inherits(CustomCharacteristic.ProgramCommand, Characteristic);
 
-  CustomCharacteristic.ProgramData = function () {
-    Characteristic.call(
-      this,
-      "Program data",
-      "E863F12F-079E-48FF-8F27-9C2605A29F52"
-    );
-    this.setProps({
-      format: Characteristic.Formats.DATA,
-      perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY],
-    });
-    this.value = this.getDefaultValue();
+  CustomCharacteristic.ProgramData = class ProgramData extends Characteristic {
+    constructor() {
+      super("Program data", "E863F12F-079E-48FF-8F27-9C2605A29F52");
+      this.setProps({
+        format: Characteristic.Formats.DATA,
+        perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
+      });
+      this.value = this.getDefaultValue();
+    }
   };
-  inherits(CustomCharacteristic.ProgramData, Characteristic);
 
   homebridge.registerPlatform("homebridge-evohome", "Evohome", EvohomePlatform);
 };
@@ -205,9 +199,8 @@ EvohomePlatform.prototype = {
                                           that.log,
                                           name,
                                           device,
-                                          locations[
-                                            that.locationIndex
-                                          ].systemId,
+                                          locations[that.locationIndex]
+                                            .systemId,
                                           deviceID,
                                           thermostat,
                                           this.temperatureUnit,
@@ -363,7 +356,7 @@ EvohomePlatform.prototype = {
           callback([]);
         }
       });
-  },
+  }
 };
 
 EvohomePlatform.prototype.renewSession = function () {
@@ -526,7 +519,7 @@ EvohomePlatform.prototype.periodicUpdate = function () {
                                     time: moment().unix(),
                                     currentTemp: newCurrentTemp,
                                     setTemp: newTargetTemp,
-                                    valvePosition: valvePosition,
+                                    valvePosition: valvePosition
                                   });
                                 }
                               } else if (
@@ -649,7 +642,7 @@ EvohomePlatform.prototype.periodicUpdate = function () {
                                   valvePosition: this.myAccessories[i]
                                     .currentState
                                     ? 100
-                                    : 0,
+                                    : 0
                                 });
                               }
                             }
@@ -714,7 +707,7 @@ function EvohomeThermostatAccessory(
   this.log = log;
 
   this.loggingService = new FakeGatoHistoryService("thermo", this, {
-    storage: "fs",
+    storage: "fs"
   });
 
   this.targetTemperateToSet = -1;
@@ -747,7 +740,7 @@ function getNextScheduledTime(log, schedule) {
   weekday[6] = "Saturday";
 
   var currenttime = correctDate.toLocaleTimeString([], {
-    hour12: false,
+    hour12: false
   });
   log.debug("The current time is", currenttime);
   var proceed = true;
@@ -1084,7 +1077,7 @@ EvohomeThermostatAccessory.prototype = {
       .setProps({
         minValue: 1,
         maxValue: 50,
-        minStep: this.device.valueResolution,
+        minStep: this.device.valueResolution
       });
 
     // this.addCharacteristic(Characteristic.TargetTemperature); READ WRITE
@@ -1095,7 +1088,7 @@ EvohomeThermostatAccessory.prototype = {
       .setProps({
         minValue: this.device.minHeatSetpoint,
         maxValue: this.device.maxHeatSetpoint,
-        minStep: this.device.valueResolution,
+        minStep: this.device.valueResolution
       });
 
     // this.addCharacteristic(Characteristic.TemperatureDisplayUnits); READ WRITE
@@ -1132,7 +1125,7 @@ EvohomeThermostatAccessory.prototype = {
       .on("get", this.getProgramData.bind(this));
 
     return [informationService, this.thermostatService, this.loggingService];
-  },
+  }
 };
 
 // This will be a Temperature sensor with a switch inside it.
@@ -1158,7 +1151,7 @@ function EvohomeDhwAccessory(
 
   // Enable logging of temperature
   this.loggingService = new FakeGatoHistoryService("thermo", this, {
-    storage: "fs",
+    storage: "fs"
   });
 
   setInterval(this.periodicCheckStatus.bind(this), interval_getStatus * 1000);
@@ -1224,7 +1217,7 @@ EvohomeDhwAccessory.prototype = {
         var data = {
           Mode: mode,
           State: value ? "On" : "Off",
-          UntilTime: untilTime,
+          UntilTime: untilTime
         };
 
         session
@@ -1289,9 +1282,9 @@ EvohomeDhwAccessory.prototype = {
       informationService,
       this.tempSensor,
       this.active,
-      this.loggingService,
+      this.loggingService
     ];
-  },
+  }
 };
 
 function EvohomeSwitchAccessory(
@@ -1378,5 +1371,5 @@ EvohomeSwitchAccessory.prototype = {
       .on("set", this.setActive.bind(this));
 
     return [informationService, this.switchService];
-  },
+  }
 };
